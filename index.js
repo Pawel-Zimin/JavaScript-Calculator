@@ -4,35 +4,94 @@ const resultDiv = document.querySelector('.result');
 const keyboardBtns = document.querySelectorAll('.keyboard-btn');
 const keyboardBtnsArr = [...keyboardBtns];
 
+let dotUsed = false;
+let wasActionLastUsed = false;
+let wasNumberLastUsed = false;
+
 const dotPressed = () => {
-
-
-   console.log('Dot button was pressed');
+   if(!dotUsed){
+      dotUsed = true;
+      equationDiv.textContent = resultDiv.textContent + '.';
+      resultDiv.textContent = equationDiv.textContent;
+   }
 }
 
 const numberPressed = (number) => {
-   // equationDiv.textContent += number;
-   // resultDiv.textContent += number;
+   wasActionLastUsed = false;
+   wasNumberLastUsed = true;
 
-   console.log(`${number} was pressed`);
+   equationDiv.textContent = equationDiv.textContent + number;
+   resultDiv.textContent = equationDiv.textContent;
+
 }
 
-const actionPressed = () => {
 
+const actionPressed = (action) => {
+   if(action === 'X'){
+      action = '*';
+   }
 
-   console.log('Action was pressed');
+   if(equationDiv.textContent === '=NAN'){
+      equationDiv.textContent = 'NAN' + action;
+      resultDiv.textContent = action;
+
+      wasActionLastUsed = true;
+   }
+   
+   // Checking if action was NOT the last button pressed
+   if(equationDiv.textContent[equationDiv.textContent.length - 1] !== action && !wasActionLastUsed){
+      wasActionLastUsed = true;
+      dotUsed = false;
+
+      equationDiv.textContent = equationDiv.textContent + action;
+      resultDiv.textContent = equationDiv.textContent;
+
+      switch(action){
+         case '+':
+   
+            break;
+         case '-':
+   
+            break;
+         case '*':
+   
+            break;
+         case '/':
+   
+            break;
+         default:
+            console.log('Unknown action');
+      }
+   }
+
+   wasActionLastUsed = true;
 }
 
 const equalSignPressed = () => {
-
-
-   console.log('Equal sign was pressed');
+   if(equationDiv.textContent[0] === 'N'){
+      equationDiv.textContent = equationDiv.textContent + '=NAN';
+      resultDiv.textContent = 'NAN';
+   }else if(equationDiv.textContent.length === 1 && wasActionLastUsed){
+      equationDiv.textContent = '=NAN';
+      resultDiv.textContent = 'NAN';
+   }else if(wasActionLastUsed){
+      
+   }else if(wasNumberLastUsed){
+      
+   }
+   
+   dotUsed = false;
+   wasActionLastUsed = false;
+   wasNumberLastUsed = false;
 }
 
 const clearPressed = () => {
+   dotUsed = false;
+   wasActionLastUsed = false;
+   wasNumberLastUsed = false;
 
-
-   console.log('Clear button was pressed');
+   equationDiv.textContent = '';
+   resultDiv.textContent = 0;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -45,7 +104,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }else if(btn.classList.contains('primary')){
          btn.addEventListener('click', () => numberPressed(btn.textContent));
       }else if(btn.classList.contains('secondary')){
-         btn.addEventListener('click', actionPressed);
+         btn.addEventListener('click', () => actionPressed(btn.textContent));
       }else if(btn.classList.contains('blue')){
          btn.addEventListener('click', equalSignPressed);
       }else if(btn.classList.contains('red')){
